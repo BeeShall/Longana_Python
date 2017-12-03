@@ -1,7 +1,10 @@
 from functools import reduce
 
 class Hand:
-	def __init__(self, hand):
+	def __init__(self):
+		self.hand = []
+
+	def setHand(self, hand):
 		self.hand = hand
 	
 	def hasDomino(self, domino):
@@ -16,8 +19,14 @@ class Hand:
 	def getHandSize(self):
 		return len(self.hand)
 
+	def isHandEmpty(self):
+		return len(self.hand) == 0
+
 	def getHandSum(self):
 		return sum( x+y for x,y in self.hand)
+
+	def getHandDominoes(self):
+		return self.hand
 
 	def toString(self):
 		pass

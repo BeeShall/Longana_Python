@@ -1,0 +1,6 @@
+{
+	"python.pythonPath": "/usr/local/opt/python3/bin/python3.5",
+	"python.linting.pylintArgs": [
+		"--disable=W0312"
+	]
+}
