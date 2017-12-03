@@ -1,4 +1,4 @@
-from Hand import Hand
+from model.Hand import Hand
 
 class Player:
 	def __init__(self, name, score, side):

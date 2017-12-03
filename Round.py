@@ -1,17 +1,18 @@
-from Layout import Layout
-from Stock import Stock
-from Player import Player
+from model.Layout import Layout
+from model.Stock import Stock
+from model.Player import Player
 
 
 class Round:
 	MAX_PIP = 10
 
-	def __init__(self, players, roundNo):
+	def __init__(self, players=[], roundNo=0):
 		self.players = players
 		enginePip = 0 if (roundNo % self.MAX_PIP == 0) else (self.MAX_PIP - (roundNo) % self.MAX_PIP)
 		print("engine is ", enginePip)
 		self.layout = Layout((enginePip, enginePip))
 		self.stock = Stock(self.MAX_PIP - 1)
+		self.nextPlayer = None
 
 	def initialize(self):
 		if(self.players[0].isHandEmpty()):
@@ -20,13 +21,17 @@ class Round:
 				player.setHand(self.stock.generateHand(8))
 
 	def setNextPlayer(self): 
-		self.nextPlayer =  self.players[self.players.index(self.nextPlayer) + 1];
+		self.nextPlayer =  self.players[(self.players.index(self.nextPlayer) + 1) % len(self.players)]
 		print("Next Player is", self.nextPlayer.name)
 
-	def checkIfAnyPlayerHasEngine(self, engine):
+	def getNextPlayer(self):
+		print(self.nextPlayer.name)
+
+	def checkIfAnyPlayerHasEngine(self, engine, log):
 		for player in self.players:
 			if player.hasDomino(engine):
 				print(player.name," has the engine!")
+				log.append({player.name:True})
 				self.nextPlayer = player
 				self.setNextPlayer()
 				return True
@@ -34,16 +39,12 @@ class Round:
 
 
 	def determineFirstPlayer(self):
+		log = []
 		if not self.layout.engineSet:
-			while not self.checkIfAnyPlayerHasEngine(self.layout.engine):
+			while not self.checkIfAnyPlayerHasEngine(self.layout.engine, log):
 				for player in self.players:
 					drawnDomino = self.stock.drawDomino()
-					print(player.name," drew ",drawnDomino)
+					log.append({player.name:drawnDomino})
 					player.addDominoInHand(drawnDomino)
 			self.layout.setEngine()
-
-
-players = [Player('1',0,'l'), Player('2',0,'r'), Player('3',0,'t'), Player('4',0,'b')]
-r = Round(players,3)
-r.initialize()
-r.determineFirstPlayer()
+		return log
