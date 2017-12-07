@@ -60,12 +60,14 @@ class Player:
 		return validMoves
 
 	def getNextBestScoreAfterPlacement(self, layout, move):
+		bestScore = 0
 		layout.placeDomino(move[1],move[0])
-		bestValidDomino = self.getBestValidMoves(layout, False )[0][1]
-		if bestValidDomino is None:
-			return 0
+		bestValidMoves= self.getBestValidMoves(layout, False )
+		if len(bestValidMoves) != 0:
+			bestValidDomino = bestValidMoves[0][1]
+			bestScore = bestValidDomino[0]+bestValidDomino[1]
 		layout.unPlace(move[0])
-		return bestValidDomino[0]+bestValidDomino[1]
+		return bestScore
 	
 
 	def getHint(self, layout, playerPassed):
@@ -89,10 +91,12 @@ class Player:
 		dominoes = self.hand.getHandDominoes()
 		for domino in dominoes:
 			if playerPassed or (domino[0] == domino[1]):
-				self.validateMoveAndAdd('l', domino, layout, validMoves)
-				self.validateMoveAndAdd('r', domino, layout, validMoves)
-				self.validateMoveAndAdd('t', domino, layout, validMoves)
-				self.validateMoveAndAdd('b', domino, layout, validMoves)
+				sides = layout.getAllSideNames()
+				for side in sides:
+					self.validateMoveAndAdd(side, domino, layout, validMoves)
+					self.validateMoveAndAdd(side, domino, layout, validMoves)
+					self.validateMoveAndAdd(side, domino, layout, validMoves)
+					self.validateMoveAndAdd(side, domino, layout, validMoves)
 			else:
 				self.validateMoveAndAdd(self.side, domino, layout, validMoves)
 		return validMoves

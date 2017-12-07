@@ -1,15 +1,13 @@
 class Layout:
-    def __init__(self, engine, noOfPlayers):
+    def __init__(self, engine,  playerNames):
         self.engine = engine
         self.engineSet = False
-        self.layout = {
-            'l': [],
-            'r': []
-        }
-        if noOfPlayers == 3:
-            self.layout['t'] = []
-        elif noOfPlayers == 4:
-            self.layout['b'] = []
+        self.layout = {}
+        for player in playerNames:
+            self.layout[player] = []
+
+    def getAllSideNames(self):
+        return self.layout.keys()
 
     def setEngine(self):
         self.engineSet = True
