@@ -37,8 +37,10 @@ class Player:
 			self.drawn = False
 			return True
 		if not self.hand.hasDomino(domino):
+			print(self.name, " doesn't have the domino in hand")
 			return False
 		if side != self.side and (not playerPassed) and (domino[0] != domino[1]):
+			print(self.name, " cannot play the domino on this side")
 			return False
 		if layout.placeDomino(domino, side):
 			self.hand.playDomino(domino)
@@ -59,7 +61,6 @@ class Player:
 
 	def getNextBestScoreAfterPlacement(self, layout, move):
 		layout.placeDomino(move[1],move[0])
-		print(move)
 		bestValidDomino = self.getBestValidMoves(layout, False )[0][1]
 		if bestValidDomino is None:
 			return 0
@@ -95,4 +96,7 @@ class Player:
 			else:
 				self.validateMoveAndAdd(self.side, domino, layout, validMoves)
 		return validMoves
+
+	def getHand(self):
+		return self.hand.toString()
 

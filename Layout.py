@@ -28,7 +28,6 @@ class Layout:
         if validatedDomino is None:
             return False
         self.layout[side].append(validatedDomino)
-        print(self.layout[side])
         return True
 
     def unPlace(self, side):

@@ -29,4 +29,4 @@ class Hand:
 		return self.hand
 
 	def toString(self):
-		print(self.hand)
+		return self.hand[:]
