@@ -3,11 +3,12 @@ class Layout:
         self.engine = engine
         self.engineSet = False
         self.layout = {}
+        self.sides = playerNames
         for player in playerNames:
             self.layout[player] = []
 
     def getAllSideNames(self):
-        return self.layout.keys()
+        return self.sides
 
     def setEngine(self):
         self.engineSet = True
@@ -41,16 +42,48 @@ class Layout:
         else:
             checkDomino = dominoes[-1]
 
-        return self.verifyDomino(domino, checkDomino)
+        return self.verifyDomino(domino, checkDomino, side)
 
-    def verifyDomino(self, domino, checkDomino):
-        if checkDomino[1] == domino[0]:
-            return domino
-        elif checkDomino[1] == domino[1]:
-            return (domino[1], domino[0])
+    def verifyDomino(self, domino, checkDomino, side):
+        if side is self.sides[0] or side is self.sides[2]:
+            if checkDomino[0] == domino[1]:
+                return domino
+            elif checkDomino[0] == domino[1]:
+                return (domino[1], domino[0])
+            else:
+                return None
         else:
-            return None
+            if checkDomino[1] == domino[0]:
+                return domino
+            elif checkDomino[1] == domino[1]:
+                return (domino[1], domino[0])
+            else:
+                return None
 
     def printLayout(self):
-        print(self.layout)
+        leftSideSpaces=0
+        if len(self.sides) > 2:
+            leftSideSpaces = (len(self.layout[self.sides[0]])*4)+1
+            print(' '*(leftSideSpaces+1), self.sides[2])
+            for domino in reversed(self.layout[self.sides[2]]):
+                print(' '*leftSideSpaces, self.getDominoString(domino))
+         
+        print(self.sides[0], end=' ')
+        for domino in reversed(self.layout[self.sides[0]]):
+            print(self.getDominoString(domino), end=' ')
+             
+        print(self.getDominoString(self.engine), end=' ')
+
+        for domino in self.layout[self.sides[1]]:
+            print(self.getDominoString(domino), end=' ')
+        print(self.sides[1])
+
+        if len(self.sides) >3:
+            for domino in self.layout[self.sides[3]]:
+                print(''*leftSideSpaces, self.getDominoString(domino))
+            print(''*leftSideSpaces, self.sides[3])
+        
+    def getDominoString(self, domino):
+        return "%d-%d" % domino
+
 

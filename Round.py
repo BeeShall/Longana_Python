@@ -15,7 +15,7 @@ class Round:
 		self.layout = Layout((enginePip, enginePip), [player.side for player in players])
 		self.stock = Stock(self.MAX_PIP)
 		self.nextPlayer = None
-		self.playerPassed = False
+		self.playerPassed = {player.side : False for player in players}
 		self.passCount = 0
 
 	def initialize(self):
@@ -26,6 +26,9 @@ class Round:
 	def setNextPlayer(self):
 		self.nextPlayer = self.players[(self.players.index(
 			self.nextPlayer) + 1) % len(self.players)]
+	
+	def resetPlayerPassed(self):
+		self.playerPassed = {player.side : False for player in self.players}
 
 	def checkIfAnyPlayerHasEngine(self, engine):
 		for player in self.players:
@@ -39,13 +42,16 @@ class Round:
 
 	def determineFirstPlayer(self):
 		if not self.layout.engineSet:
+			print('-' * 44)
 			while not self.checkIfAnyPlayerHasEngine(self.layout.engine):
 				for player in self.players:
 					drawnDomino = self.stock.drawDomino()
-					print(player.name, " drew ", drawnDomino)
-					player.addDominoInHand(drawnDomino)
-					player.drawn = False
+					if drawnDomino is not None:
+						print(player.name, " drew ", drawnDomino)
+						player.addDominoInHand(drawnDomino)
+						player.drawn = False
 			self.layout.setEngine()
+			print('-' * 44)
 
 	def playerDraw(self):
 		if isinstance(self.nextPlayer, Human):
@@ -54,28 +60,31 @@ class Round:
 				return False
 		if(self.nextPlayer.drawn):
 			self.passCount += 1
-			self.playerPassed = True
+			self.playerPassed[self.nextPlayer.side] = True
 			print(self.nextPlayer.name,
 				  " did not have any playable move's in hand. So, the player passed!")
 			self.setNextPlayer()
+			return True
 		else:
 			drawnDomino = self.stock.drawDomino()
 			print(self.nextPlayer.name, " drew ", drawnDomino)
 			self.nextPlayer.addDominoInHand(drawnDomino)
-		return True
+			return False
 
 	def play(self, domino=None, side=None):
+		print('-' * 44)
 		playerMove = self.nextPlayer.play(self.layout, self.playerPassed, domino, side)
 		if playerMove is not None:
 			print(self.nextPlayer.name, " played ", playerMove)
-			print("\n Layout:")
-			self.layout.printLayout()
+			self.printGameState()
+			self.resetPlayerPassed()
 			self.setNextPlayer()
 		else:
 			if isinstance(self.nextPlayer, Human):
 				return False
 			else:
 				self.playerDraw()
+		print('-' * 44)
 		return True
 
 	def runRound(self):
@@ -91,6 +100,14 @@ class Round:
 		while not self.checkIfRoundEnded():
 			if self.runRound():
 				self.getHumanMove()
+
+	def printGameState(self):
+		print('-' * 44)
+		print("Layout:")
+		self.layout.printLayout()
+		print("\nStock:")
+		self.stock.printStock()
+		print('-' * 44)
 	
 	def displayUserMenu(self):
 		choice = -1
@@ -108,32 +125,34 @@ class Round:
 
 	def getHumanMove(self):
 		moveValid = False
-		print(self.nextPlayer.getHand())
+		print("Human Hand: ",self.nextPlayer.getHand())
 		while not moveValid:
 			choice = self.displayUserMenu()
 			if choice == 1:
 				print(self.nextPlayer.getHand())
 				if len(self.nextPlayer.getAllPossibleMoves(self.layout, self.playerPassed)) == 0:
 					print(self.nextPlayer.name, " doesn't have any playable moves in hand!")
-					self.playerDraw()
+					if self.playerDraw():
+						moveValid = True
 				else:
 					valid = False
 					while not valid:
 						move = input(
 							"Please enter the domino you'd like to play e.g. 4-5 ::").strip()
 						if(len(move) != 3):
-							print("Please follow the correct format and try again!")
-						elif (not move[1].isdigit() or not move[3].isdigit()):
-							print("Please follow the correct format and try again!")
+							print("Please follow the correct format and try again! length")
+						elif (not move[0].isdigit() or not move[2].isdigit()):
+							print("Please follow the correct format and try again! not digit")
 						else:
 							sides = self.layout.getAllSideNames()
-							print("Please select the side to play in using the respective index")
-							for x in range(0,len(sides)):
-								print(x+1, sides[x])
-							side = -1
-							while side< 0 or side >len(sides):
-								side = int(input("Please enter the index"))
-							domino = (int(move[2]), int(move[4]))
+							print('-' * 44)
+							print("Please select the side to play:")
+							for side in sides:
+								print(side)
+							side = ''
+							while side not in sides:
+								side = input("Please select a side: ").lower()
+							domino = (int(move[0]), int(move[2]))
 							if self.play(domino, side):
 								return
 							else:
@@ -148,7 +167,7 @@ class Round:
 					print(hint)
 
 	def checkIfRoundEnded(self):
-		if self.stock.isEmpty() and self.passCount > 2:
+		if self.stock.isEmpty() and self.passCount > len(self.players):
 			return True
 
 		for player in self.players:
@@ -161,7 +180,3 @@ class Round:
 players = [Computer('C1', 0, 'l'), Human('H1', 0, 'r'), Computer('C3', 0, 't')]
 r = Round(players)
 r.start()
-
-		
-	
-

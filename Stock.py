@@ -14,11 +14,13 @@ class Stock:
 		return hand
 
 	def drawDomino(self):
+		if self.isEmpty():
+			return None
 		domino = self.stock[0]
 		del self.stock[0]
 		return domino
 
-	def toString(self):
+	def printStock(self):
 		print(self.stock)
 
 

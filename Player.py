@@ -31,7 +31,7 @@ class Player:
 	def hasDomino(self, domino):
 		return self.hand.hasDomino(domino)
 
-	def playDomino(self, domino, side, layout=None, playerPassed=None):
+	def playDomino(self, domino, side, layout=None, playerPassed={}):
 		if side == 'e':
 			self.hand.playDomino(domino)
 			self.drawn = False
@@ -39,7 +39,7 @@ class Player:
 		if not self.hand.hasDomino(domino):
 			print(self.name, " doesn't have the domino in hand")
 			return False
-		if side != self.side and (not playerPassed) and (domino[0] != domino[1]):
+		if side != self.side and (not playerPassed[side]) and (domino[0] != domino[1]):
 			print(self.name, " cannot play the domino on this side")
 			return False
 		if layout.placeDomino(domino, side):
@@ -62,7 +62,7 @@ class Player:
 	def getNextBestScoreAfterPlacement(self, layout, move):
 		bestScore = 0
 		layout.placeDomino(move[1],move[0])
-		bestValidMoves= self.getBestValidMoves(layout, False )
+		bestValidMoves= self.getBestValidMoves(layout, {} )
 		if len(bestValidMoves) != 0:
 			bestValidDomino = bestValidMoves[0][1]
 			bestScore = bestValidDomino[0]+bestValidDomino[1]
@@ -90,15 +90,11 @@ class Player:
 		validMoves = []
 		dominoes = self.hand.getHandDominoes()
 		for domino in dominoes:
-			if playerPassed or (domino[0] == domino[1]):
-				sides = layout.getAllSideNames()
-				for side in sides:
-					self.validateMoveAndAdd(side, domino, layout, validMoves)
-					self.validateMoveAndAdd(side, domino, layout, validMoves)
-					self.validateMoveAndAdd(side, domino, layout, validMoves)
-					self.validateMoveAndAdd(side, domino, layout, validMoves)
-			else:
-				self.validateMoveAndAdd(self.side, domino, layout, validMoves)
+			self.validateMoveAndAdd(self.side, domino, layout, validMoves)
+			sides = layout.getAllSideNames()
+			for side in sides:
+				if (side in playerPassed and playerPassed[side]) or (domino[0] == domino[1]):
+					self.validateMoveAndAdd(side, domino, layout, validMoves)		
 		return validMoves
 
 	def getHand(self):
