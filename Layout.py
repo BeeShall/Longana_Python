@@ -45,7 +45,7 @@ class Layout:
         return self.verifyDomino(domino, checkDomino, side)
 
     def verifyDomino(self, domino, checkDomino, side):
-        if side is self.sides[0] or side is self.sides[2]:
+        if side is self.sides[0] or ( len(self.sides)>2 and side is self.sides[2]):
             if checkDomino[0] == domino[1]:
                 return domino
             elif checkDomino[0] == domino[1]:
@@ -63,7 +63,7 @@ class Layout:
     def printLayout(self):
         leftSideSpaces=0
         if len(self.sides) > 2:
-            leftSideSpaces = (len(self.layout[self.sides[0]])*4)+1
+            leftSideSpaces = (len(self.layout[self.sides[0]])*4)+len(self.sides[0])
             print(' '*(leftSideSpaces+1), self.sides[2])
             for domino in reversed(self.layout[self.sides[2]]):
                 print(' '*leftSideSpaces, self.getDominoString(domino))

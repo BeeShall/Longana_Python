@@ -5,6 +5,7 @@ class Human(Player):
 
 	def play(self, layout,playerPassed, domino, side):
 		if super().playDomino(domino, side, layout, playerPassed):
+			self.drawn = False
 			return (side, domino)
 		else:
 			return None

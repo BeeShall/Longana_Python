@@ -24,6 +24,9 @@ class Player:
 	def addDominoInHand(self, domino):
 		self.hand.addDomino(domino)
 		self.drawn = True
+
+	def getHandSum(self):
+		return self.hand.getHandSum()
 	
 	def isHandEmpty(self):
 		return self.hand.isHandEmpty()
@@ -71,14 +74,20 @@ class Player:
 	
 
 	def getHint(self, layout, playerPassed):
+		print("Strategy: ")
 		validMoves = self.getBestValidMoves(layout, playerPassed)
 		if len(validMoves) == 0:
+			print("Player doesn't have any valid moves in hand!")
 			return None
 		elif len(validMoves) < 2:
 			return validMoves[0]
+			print("The best move that yields the highest score in hand is ",validMoves[0])
 		else:
+			print("The best move that yields the highest score in hand is ",validMoves[0])
+			print("However, this move can also be placed on other player's locations!")
 			scores = [self.getNextBestScoreAfterPlacement(layout, move) for move in validMoves]
 			maxIndex = scores.index(max(scores))
+			print("This domino will yield the best score if placed ", validMoves[maxIndex])
 			return validMoves[maxIndex]
 
 	def validateMoveAndAdd(self, side, domino, layout, moves):

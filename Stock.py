@@ -22,5 +22,3 @@ class Stock:
 
 	def printStock(self):
 		print(self.stock)
-
-

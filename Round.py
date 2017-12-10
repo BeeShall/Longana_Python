@@ -4,7 +4,6 @@ from Player import Player
 from Human import Human
 from Computer import Computer
 
-
 class Round:
 
 	def __init__(self, players=[], roundNo=1):
@@ -28,6 +27,7 @@ class Round:
 			self.nextPlayer) + 1) % len(self.players)]
 	
 	def resetPlayerPassed(self):
+		self.passCount = 0
 		self.playerPassed = {player.side : False for player in self.players}
 
 	def checkIfAnyPlayerHasEngine(self, engine):
@@ -67,8 +67,12 @@ class Round:
 			return True
 		else:
 			drawnDomino = self.stock.drawDomino()
-			print(self.nextPlayer.name, " drew ", drawnDomino)
-			self.nextPlayer.addDominoInHand(drawnDomino)
+			if drawnDomino is None:
+				print("Stock is empty!")
+				self.nextPlayer.drawn = True
+			else:
+				print(self.nextPlayer.name, " drew ", drawnDomino)
+				self.nextPlayer.addDominoInHand(drawnDomino)
 			return False
 
 	def play(self, domino=None, side=None):
@@ -100,6 +104,29 @@ class Round:
 		while not self.checkIfRoundEnded():
 			if self.runRound():
 				self.getHumanMove()
+		
+		#at this point roundEnds
+		print('-' * 44)
+		print("The round has ended! ")
+		self.calculateRoundWinner()
+
+	def calculateRoundWinner(self):
+		scores  =[]
+		print("Round scores for players: ")
+		for player in self.players:
+			handSum = player.getHandSum()
+			print(player.name,": ", handSum)
+			scores.append(handSum)
+		
+		maxScore = max(scores)
+		minScore = min(scores)
+		minScoreIndexes = [index for index, value in enumerate(scores) if value == minScore]
+		if len(minScoreIndexes) > 1:
+			print("Since more than one players have the minimum hand sum, the round ends as a draw!")
+			return
+		winner = self.players[minScoreIndexes[0]]
+		print(winner.name," wins the round with a score of ",maxScore )
+		winner.addScore(maxScore)
 
 	def printGameState(self):
 		print('-' * 44)
@@ -168,15 +195,13 @@ class Round:
 
 	def checkIfRoundEnded(self):
 		if self.stock.isEmpty() and self.passCount > len(self.players):
+			print("Round ended because stock is empty and all players passed")
 			return True
 
 		for player in self.players:
 			if player.isHandEmpty():
+				print("Round ended because ", player.name,"'s hand is empty!")
 				return True
 		
 		return False
-		
 
-players = [Computer('C1', 0, 'l'), Human('H1', 0, 'r'), Computer('C3', 0, 't')]
-r = Round(players)
-r.start()

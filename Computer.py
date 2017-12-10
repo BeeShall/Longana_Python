@@ -9,4 +9,5 @@ class Computer(Player):
 		move =  super().getHint(layout, playerPassed)
 		if move is not None:
 			super().playDomino(move[1],move[0],layout,playerPassed)
+			self.drawn = False
 		return move
