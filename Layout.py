@@ -12,6 +12,14 @@ class Layout:
 
     def setEngine(self):
         self.engineSet = True
+    
+    def setLayout(self, layout):
+        self.layout = layout
+        for side in layout:
+            if self.engine in self.layout[side]:
+                self.layout[side].remove(self.engine)
+                self.setEngine()
+        print(self.layout)
 
     def isEngineSet(self):
         return self.engineSet
@@ -45,7 +53,7 @@ class Layout:
         return self.verifyDomino(domino, checkDomino, side)
 
     def verifyDomino(self, domino, checkDomino, side):
-        if side is self.sides[0] or ( len(self.sides)>2 and side is self.sides[2]):
+        if side is self.sides[0] or ( len(self.sides)>2 and (side == self.sides[2])):
             if checkDomino[0] == domino[1]:
                 return domino
             elif checkDomino[0] == domino[1]:

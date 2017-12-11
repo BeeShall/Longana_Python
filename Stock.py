@@ -20,5 +20,8 @@ class Stock:
 		del self.stock[0]
 		return domino
 
+	def setStock(self, stock):
+		self.stock = stock
+
 	def printStock(self):
 		print(self.stock)

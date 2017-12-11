@@ -78,9 +78,9 @@ class Round:
 	def play(self, domino=None, side=None):
 		print('-' * 44)
 		playerMove = self.nextPlayer.play(self.layout, self.playerPassed, domino, side)
+		print(playerMove)
 		if playerMove is not None:
 			print(self.nextPlayer.name, " played ", playerMove)
-			self.printGameState()
 			self.resetPlayerPassed()
 			self.setNextPlayer()
 		else:
@@ -95,12 +95,14 @@ class Round:
 		while isinstance(self.nextPlayer, Computer):
 			if self.checkIfRoundEnded():
 				return False
+			self.printGameState()
 			self.play()
 		return True
 
 	def start(self):
 		self.initialize()
-		self.determineFirstPlayer()
+		if not self.layout.engineSet:
+			self.determineFirstPlayer()
 		while not self.checkIfRoundEnded():
 			if self.runRound():
 				self.getHumanMove()
@@ -109,6 +111,21 @@ class Round:
 		print('-' * 44)
 		print("The round has ended! ")
 		self.calculateRoundWinner()
+
+	def load(self, layout, stock, nextPlayer, playersPassed):
+		self.layout.setLayout(layout)
+		self.stock.setStock(stock)
+		self.nextPlayer = nextPlayer
+		self.passCount = playersPassed
+		playerIndex = self.players.index(nextPlayer)-1
+		
+		while playersPassed > 0:
+			self.playerPassed[self.players[playerIndex].side] = True
+			playerIndex-=1
+			playersPassed-=1
+
+		self.start()
+
 
 	def calculateRoundWinner(self):
 		scores  =[]
@@ -152,7 +169,8 @@ class Round:
 
 	def getHumanMove(self):
 		moveValid = False
-		print("Human Hand: ",self.nextPlayer.getHand())
+		self.printGameState()
+		print(self.nextPlayer.name,"Hand: ",self.nextPlayer.getHand())
 		while not moveValid:
 			choice = self.displayUserMenu()
 			if choice == 1:
