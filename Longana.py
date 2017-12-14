@@ -52,18 +52,32 @@ class Longana:
 
 		players = []
 		sides = ['l','r','t','b']
-		print("Please enter the player type for all the players (h for human and c for computer): ")
-		for i in range(0, noOfPlayers):
-			playerType = ''
-			while (playerType != 'h') and (playerType != 'c'):
-				playerType = (input(i + 1)).lower()
+		humanPlayerEnough = False
+		computerPlayerEnough = False
 
-			name = input("Enter player name: ")
+		while (not humanPlayerEnough) or (not computerPlayerEnough):
+			print("Please enter the player type for all the players (h for human and c for computer): ")
+			players.clear()
+			for i in range(0, noOfPlayers):
+				playerType = ''
+				while (playerType != 'h') and (playerType != 'c'):
+					playerType = (input(i + 1)).lower()
 
-			if playerType == 'h':
-				players.append(Human(name, 0, sides[i]))
-			else:
-				players.append(Computer(name, 0, sides[i]))
+				name = input("Enter player name: ")
+
+				if playerType == 'h':
+					humanPlayerEnough = True
+					players.append(Human(name, 0, sides[i]))
+				else:
+					computerPlayerEnough = True
+					players.append(Computer(name, 0, sides[i]))
+			
+			if not humanPlayerEnough:
+				print("Not enough human players!!!")
+				computerPlayerEnough = False
+			elif not computerPlayerEnough:
+				humanPlayerEnough = False
+				print("Not enough computer players!!")
 
 		t = Tournament(score, players)
 		t.start()
