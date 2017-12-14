@@ -25,3 +25,9 @@ class Stock:
 
 	def printStock(self):
 		print(self.stock)
+
+	def serialize(self):
+		stock = []
+		for domino in self.stock:
+			stock.append(str(domino[0])+"-"+str(domino[2]))
+		return stock

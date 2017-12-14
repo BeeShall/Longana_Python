@@ -69,7 +69,7 @@ class Layout:
                 return None
 
     def printLayout(self):
-        leftSideSpaces=0
+        leftSideSpaces = 0
         if len(self.sides) > 2:
             leftSideSpaces = (len(self.layout[self.sides[0]])*4)+len(self.sides[0])
             print(' '*(leftSideSpaces+1), self.sides[2])
@@ -88,10 +88,16 @@ class Layout:
 
         if len(self.sides) >3:
             for domino in self.layout[self.sides[3]]:
-                print(''*leftSideSpaces, self.getDominoString(domino))
-            print(''*leftSideSpaces, self.sides[3])
+                print(' '*leftSideSpaces, self.getDominoString(domino))
+            print(' '*(leftSideSpaces+1), self.sides[3])
         
     def getDominoString(self, domino):
         return "%d-%d" % domino
+
+    def getSerializedLayout(self):
+        serialLayout = self.layout.copy()
+        serialLayout['l'].insert(0,self.engine)
+        return serialLayout
+
 
 

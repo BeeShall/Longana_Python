@@ -30,3 +30,9 @@ class Hand:
 
 	def toString(self):
 		return self.hand[:]
+
+	def serialize(self):
+		hand = []
+		for domino in self.hand:
+			hand.append(str(domino[0])+"-"+str(domino[2]))
+		return hand

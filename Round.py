@@ -16,6 +16,7 @@ class Round:
 		self.nextPlayer = None
 		self.playerPassed = {player.side : False for player in players}
 		self.passCount = 0
+		self.saveAndQuit = False
 
 	def initialize(self):
 		if(self.players[0].isHandEmpty()):
@@ -106,8 +107,12 @@ class Round:
 		while not self.checkIfRoundEnded():
 			if self.runRound():
 				self.getHumanMove()
+			else:
+				break
 		
-		#at this point roundEnds
+		#at this point roundEnds or user asked to save and quit
+		if(self.saveAndQuit):
+			return
 		print('-' * 44)
 		print("The round has ended! ")
 		self.calculateRoundWinner()
@@ -212,6 +217,15 @@ class Round:
 					print(hint)
 
 	def checkIfRoundEnded(self):
+		#ask for save and quit
+		choice = ''
+		while choice != 'y' and choice != 'n':
+			choice = input("Would you like to save and quit? (y/n)").lower()
+		
+		if(choice == 'y'):
+			self.saveAndQuit = True
+			return True
+
 		if self.stock.isEmpty() and self.passCount > len(self.players):
 			print("Round ended because stock is empty and all players passed")
 			return True
@@ -222,4 +236,17 @@ class Round:
 				return True
 		
 		return False
+
+	def serialize(self):
+		serialRound = {}
+		players = []
+		for player in self.players:
+			players.append(player.serialize())
+		serialRound['players'] = players
+		serialRound['layout'] = self.layout.getSerializedLayout()
+		serialRound['boneyard'] = self.stock.stock
+		serialRound['playersPassed'] = self.passCount
+		serialRound['nextPlayer'] = self.nextPlayer.name
+
+		return serialRound
 

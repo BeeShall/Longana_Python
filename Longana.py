@@ -41,10 +41,14 @@ class Longana:
 			score = input("Please enter a tournament score: ")
 		score = int(score)
 
-		noOfPlayers = ''
-		while not noOfPlayers.isdigit():
+		noOfPlayers = 0
+		while noOfPlayers <1 or noOfPlayers >4  :
 			noOfPlayers = input("How many players do you want to play? ")
-		noOfPlayers = int(noOfPlayers)
+			if (noOfPlayers.isdigit()):
+				noOfPlayers = int(noOfPlayers)
+			else:
+				noOfPlayers = 0
+		
 
 		players = []
 		sides = ['l','r','t','b']
@@ -56,7 +60,7 @@ class Longana:
 
 			name = input("Enter player name: ")
 
-			if playerType is 'h':
+			if playerType == 'h':
 				players.append(Human(name, 0, sides[i]))
 			else:
 				players.append(Computer(name, 0, sides[i]))

@@ -109,3 +109,13 @@ class Player:
 	def getHand(self):
 		return self.hand.toString()
 
+	def serialize(self):
+		return {
+			"name": self.name,
+			"type": type(self).__name__,
+			"hand": self.hand.toString(),
+			"side": self.side,
+			"score": self.score
+		}
+
+
