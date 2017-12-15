@@ -121,13 +121,16 @@ class Round:
 		self.layout.setLayout(layout)
 		self.stock.setStock(stock)
 		self.nextPlayer = nextPlayer
-		self.passCount = playersPassed
-		playerIndex = self.players.index(nextPlayer)-1
-		
-		while playersPassed > 0:
-			self.playerPassed[self.players[playerIndex].side] = True
-			playerIndex-=1
-			playersPassed-=1
+		if playersPassed is not None:
+			self.passCount = playersPassed
+			playerIndex = self.players.index(nextPlayer)-1
+			
+			while playersPassed > 0:
+				self.playerPassed[self.players[playerIndex].side] = True
+				playerIndex-=1
+				playersPassed-=1
+		else:
+			self.determineFirstPlayer()
 
 		self.start()
 
